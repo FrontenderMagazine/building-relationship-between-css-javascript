@@ -73,7 +73,7 @@ HTML-кодом» я подразумеваю то, что мы получаем
 принципам прогрессивного улучшения, вы вряд ли будете использовать 
 инлайновые стили таким образом:
 
-    &lt;div class="content-area" style="display:none;">&lt;/div>
+    <div class="content-area" style="display:none;"></div>
   
 Мы не используем такой код, потому что скринридеры игнорируют элементы для
 которых задано `display:none`, к тому же инлайновые стили замусоривают HTML-код
@@ -96,7 +96,7 @@ HTML-кодом» я подразумеваю то, что мы получаем
 
 **jQuery**
 
-  $('.content-area').addClass('hide');
+    $('.content-area').addClass('hide');
 
 Использование `display:none` для скрытия содержимого всё ещё создает проблему
 с доступностью, но, так как мы больше не используем готовый jQuery-метод,
@@ -172,32 +172,33 @@ JavaScript. Я понимаю, что кому-то общение, происх
 
 Теперь пропишем CSS:
 
-01 #cube {
-02   height: 200px;
-03   width: 200px;
-04   background: orange;
-05   -webkit-transition: opacity linear .5s;
-06    -moz-transition: opacity linear .5s;
-07     -o-transition: opacity linear .5s;
-08       transition: opacity linear .5s;
-09 }
-10  
-11 .fade-out {
-12   opacity: 0;
-13 }
+    #cube {
+       height: 200px;
+       width: 200px;
+       background: orange;
+       -webkit-transition: opacity linear .5s;
+        -moz-transition: opacity linear .5s;
+         -o-transition: opacity linear .5s;
+           transition: opacity linear .5s;
+    }
+
+    .fade-out {
+        opacity: 0;
+    }
 
 Перед добавлением JavaScript давайте ненадолго отвлечемся, чтобы разобраться 
 с тем, что мы собираемся сделать:
-1. Используем библиотеку Modernizr, чтобы проверить поддерживается ли CSS-свойство 
-`transition`.
-2. Если оно подерживается:
-2.1. Присваиваем кнопке событие onclick, которое при нажатии на кнопку будет
-добавлять класс `fade-out` к элементу с идентификатором `#cube`.
-2.2. Добавляем слушатель события, который определит завершение `transition`. Это позволит нам вызвать функцию, которая удалит элемент `#cube` из DOM.
-3. Если transition не поддерживается:
-3.1. Присваиваем кнопке событие onclick, запускающее jQuery-метод  
-`animate()`, чтобы обеспечить плавное исчезновение элемента `#cube`.
-3.2. Используем callback-функцию, чтобы удалить `#cube` из DOM-дерева.
+
+    1. Используем библиотеку Modernizr, чтобы проверить поддерживается ли CSS-свойство 
+    `transition`.
+    2. Если оно подерживается:
+    2.1. Присваиваем кнопке событие onclick, которое при нажатии на кнопку будет
+    добавлять класс `fade-out` к элементу с идентификатором `#cube`.
+    2.2. Добавляем слушатель события, который определит завершение `transition`. Это позволит нам вызвать функцию, которая удалит элемент `#cube` из DOM.
+    3. Если transition не поддерживается:
+    3.1. Присваиваем кнопке событие onclick, запускающее jQuery-метод  
+    `animate()`, чтобы обеспечить плавное исчезновение элемента `#cube`.
+    3.2. Используем callback-функцию, чтобы удалить `#cube` из DOM-дерева.
 
 Этот алгоритм использует новое для нас событие `transitionend`, которое будет
 выполнено по окончании CSS-перехода. Отличная штука, чтобы вы знали. У нас 
@@ -206,29 +207,29 @@ JavaScript. Я понимаю, что кому-то общение, происх
 
 Первым делом нужно прописать переменные в JavaScript:
 
-01 (function () {
-02  
-03   // прописываем переменные
-04   var elem = document.getElementById('cube'),
-05     button = document.getElementById('do-it'),
-06     transitionTimingFunction = 'linear',
-07     transitionDuration = 500,
-08     transitionend;
-09  
-10   // прописываем синтаксис свойства transitionend, используя вендорные префиксы
-11   if ($.browser.webkit) {
-12     transitionend = 'webkitTransitionEnd'; // safari & chrome
-13   } else if ($.browser.mozilla) {
-14     transitionend = 'transitionend'; // firefox
-15   } else if ($.browser.opera) {
-16     transitionend = 'oTransitionEnd'; // opera
-17   } else {
-18     transitionend = 'transitionend'; // best guess at the default?
-19   }
-20  
-21   //... добавляем остальной код сюда.
-22  
-23 })(); // конец обёртывающей функции
+        (function () {
+        
+            // прописываем переменные
+            var elem = document.getElementById('cube'),
+               button = document.getElementById('do-it'),
+               transitionTimingFunction = 'linear',
+               transitionDuration = 500,
+               transitionend;
+            
+            // прописываем синтаксис свойства transitionend, используя вендорные префиксы
+            if ($.browser.webkit) {
+               transitionend = 'webkitTransitionEnd'; // safari & chrome
+            } else if ($.browser.mozilla) {
+               transitionend = 'transitionend'; // firefox
+            } else if ($.browser.opera) {
+               transitionend = 'oTransitionEnd'; // opera
+            } else {
+               transitionend = 'transitionend'; // best guess at the default?
+            }
+            
+            //... добавляем остальной код сюда.
+          
+        })(); // конец обёртывающей функции
 
 Вы, наверное, заметили, что для события `transitionend` нужен вендорный
 префикс, для этого нам понадобилось определение браузера. Как правило,
@@ -240,33 +241,33 @@ JavaScript. Я понимаю, что кому-то общение, происх
 поддержку браузерами, и для каждого случая добавим слушатель события (все 
 это будет находиться в обёртывающей функции):
 
-01 // с помощью Modernizr проверяем наличие поддержки transition
-02 if(Modernizr.csstransitions) {
-03  
-04   // подключение класса при клике мышкой
-05   $(button).on('click', function () {
-06     $(elem).addClass('fade-out');
-07   });
-08    
-09   // имитация callback-функции при помощи слушателя события
-10   elem.addEventListener(transitionend, function () {
-11     theCallbackFunction(elem);
-12   }, false);
-13     
-14 } else {
-15  
-16   // слушатель события для браузеров, не поддерживающих предыдущий вариант 
-17   $(button).on('click', function () {
-18  
-19     $(elem).animate({
-20       'opacity' : '0'
-21     }, transitionDuration, transitionTimingFunction, function () {
-22       theCallbackFunction(elem);
-23     });
-24  
-25   }); // конец события
-26  
-27 } // конец проверки 
+        // с помощью Modernizr проверяем наличие поддержки transition
+        if(Modernizr.csstransitions) {
+          
+        // подключение класса при клике мышкой
+           $(button).on('click', function () {
+             $(elem).addClass('fade-out');
+           });
+            
+           // имитация callback-функции при помощи слушателя события
+           elem.addEventListener(transitionend, function () {
+             theCallbackFunction(elem);
+           }, false);
+             
+         } else {
+          
+           // слушатель события для браузеров, не поддерживающих предыдущий вариант 
+           $(button).on('click', function () {
+          
+             $(elem).animate({
+               'opacity' : '0'
+             }, transitionDuration, transitionTimingFunction, function () {
+               theCallbackFunction(elem);
+             });
+          
+           }); // конец события
+          
+         } // конец проверки 
 
 И наконец, нам нужно указать общую функцию для обоих процессов, которая будет
 выполняться после завершения transition (или animation). Чтобы не усложнять наш
@@ -274,18 +275,18 @@ JavaScript. Я понимаю, что кому-то общение, происх
 является callback-функцией). Она удалит элемент из DOM-дерева и выведет
 в консоль сообщение о завершении процесса.
 
-01 // прописываем callback-функцию, которая выполняется после завершения transition/animation
-02 function theCallbackFunction (elem) {
-03  
-04   'use strict';
-05  
-06   // удаление элемента из DOM
-07   $(elem).remove();
-08  
-09   // вывод сообщения об успешном завершении
-10   console.log('the transition is complete');
-11  
-12 }
+        // прописываем callback-функцию, которая выполняется после завершения transition/animation
+        function theCallbackFunction (elem) {
+          
+            'use strict';
+          
+            // удаление элемента из DOM
+            $(elem).remove();
+        
+            // вывод сообщения об успешном завершении
+            console.log('the transition is complete');
+        
+        }
 
 Вне зависимости от браузера – от IE 7 (в худшем случае) до мобильной версии
 Safari или Chrome – действие кода будет идентичным. Разница скрыта
