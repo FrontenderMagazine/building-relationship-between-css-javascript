@@ -91,7 +91,7 @@ HTML-кодом» я подразумеваю то, что мы получаем
 **CSS**
 
     .hide {
-    display: none;
+       display: none;
     }
 
 **jQuery**
@@ -106,13 +106,13 @@ HTML-кодом» я подразумеваю то, что мы получаем
 **CSS**
 
     .hide {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
+       position: absolute;
+       top: -9999px;
+       left: -9999px;
     }
-    
+
     .remove {
-    display: none;
+       display: none;
     }
 
 В приведенном примере вы можете видеть, что, хотя применение любого 
